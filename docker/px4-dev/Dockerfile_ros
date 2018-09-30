@@ -14,6 +14,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 421C365BD9F
 	&& apt-get update \
 	&& apt-get -y --quiet --no-install-recommends install \
 		geographiclib-tools \
+		libgtest-dev \
 		libeigen3-dev \
 		libgeographic-dev \
 		libopencv-dev \
@@ -35,8 +36,12 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 421C365BD9F
 	&& apt-get clean autoclean \
 	# pip
 	&& pip install --upgrade matplotlib numpy px4tools pymavlink \
-	&& rm -rf /var/lib/apt/lists/{apt,dpkg,cache,log} /tmp/* /var/tmp/*
-
+	&& rm -rf /var/lib/apt/lists/{apt,dpkg,cache,log} /tmp/* /var/tmp/* \
+	# gtest
+	&& cd /usr/src/gtest \
+	&& cmake CMakeLists.txt && make \
+	&& cp *.a /usr/lib
+ 
 RUN rosdep init && rosdep update
 
 # create and start as LOCAL_USER_ID
